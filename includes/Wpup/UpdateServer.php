@@ -267,7 +267,8 @@ class Wpup_UpdateServer {
 		header('Content-Disposition: attachment; filename="' . $package->slug . '.zip"');
 		header('Content-Transfer-Encoding: binary');
 		header('Content-Length: ' . $package->getFileSize());
-		header('Cache-Control: max-age=' . $cacheTime);
+		header('Cache-Control: public, max-age=' . $cacheTime);
+
 		readfile($package->getFilename());
 	}
 
