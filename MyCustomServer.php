@@ -13,26 +13,26 @@ class MyCustomServer extends Wpup_UpdateServer {
 		exit;
 	}
 
+	protected function generateDownloadUrl( Wpup_Package $package ) {
+		$query    = array(
+			'action' => 'download',
+			'slug'   => $package->slug,
+		);
+		$metadata = $package->getMetadata();
+
+		return self::addQueryArg( $query, $this->serverUrl ) . '&ver=' . $metadata['version'];
+	}
+
+
 	protected function actionDownload( Wpup_Request $request ) {
-		$package = $request->package;
+		$package   = $request->package;
+		$cacheTime = 12 * 3600; // Set cache headers for 12 hours (12 hours * 3600 seconds)
 
-		$directory = __DIR__ . '/packages/';
-		$etag      = '"' . md5( filemtime( $directory ) ) . '"';
-
-		// Check if the client's ETag matches the server's ETag, if so, send a 304 Not Modified response
-		if ( isset( $_SERVER['HTTP_IF_NONE_MATCH'] ) && trim( $_SERVER['HTTP_IF_NONE_MATCH'] ) === $etag ) {
-			header( 'HTTP/1.1 304 Not Modified' );
-			exit;
-		}
-
-		// Set cache headers for 3 hours (3 hours * 3600 seconds)
-		$cacheTime = 3 * 3600;
 		header( 'Content-Type: application/zip' );
 		header( 'Content-Disposition: attachment; filename="' . $package->slug . '.zip"' );
 		header( 'Content-Transfer-Encoding: binary' );
 		header( 'Content-Length: ' . $package->getFileSize() );
 		header( 'Cache-Control: public, max-age=' . $cacheTime );
-		header( 'ETag: ' . $etag );
 
 		readfile( $package->getFilename() );
 	}
