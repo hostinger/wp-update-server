@@ -26,7 +26,7 @@ class MyCustomServer extends Wpup_UpdateServer {
 
 	protected function actionDownload( Wpup_Request $request ) {
 		$package   = $request->package;
-		$cacheTime = 12 * 3600; // Set cache headers for 12 hours (12 hours * 3600 seconds)
+		$cacheTime = 3 * 3600; // Set cache headers for 6 hours (3 hours * 3600 seconds)
 
 		header( 'Content-Type: application/zip' );
 		header( 'Content-Disposition: attachment; filename="' . $package->slug . '.zip"' );
